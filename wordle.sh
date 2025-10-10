@@ -1,6 +1,7 @@
 #!/bin/bash
 target="audio"
 targeta=(a u d i o)
+success=0
 
 validate_guess() {
     if [ ${#1} -ne 5 ]; then  # if length != 5
@@ -25,15 +26,16 @@ create_hints() {
     for i in {0..4}; do
         if  [ ${guessa[$i]} = ${targeta[$i]} ]; then
             lettersa[$i]=1
+            targetchk[$i]=3
         fi
     done
     for j in {0..4}; do
         if [ ${lettersa[$j]} -eq 0 ]; then      # if the letter is does not exactly map, check it
             brk=0
             k=0
-            while (($k < 5)) && (($brk = 0)); do       # constraints for the word
-                if [ ${targetchk[$k]} -eq 0 ]; then     # if this is comparing to an index in the target that has not been satisfied yet
-                    if [ ${guessa[$j]} = ${targeta[$k]} ]; then     # and the values are the same
+            while (($k < 5)) && (($brk == 0)); do       # constraints for the word
+                if [ ${targetchk[$k]} -ne 3 ]; then     # if this is comparing to an index in the target that has not been satisfied yet
+                    if [ ${guessa[$j]} == ${targeta[$k]} ]; then     # and the values are the same
                         lettersa[j]=2       # assign a 2
                         targetchk[k]=3      # mark the target index as satisfied 
                         brk=$((brk+1))      # break
@@ -66,22 +68,22 @@ game() {
     #generate the word
     for i in {0..4}; do
         read guess
-        guessa=(${guess:0:1} ${guess:1:1} ${guess:2:1} ${guess:3:1} ${guess:4:1})
         while [ $(validate_guess "$guess") -eq 1 ]; do
-            echo -e "\e[1A\e[K\r"  # bugged, bugs with invalid inputs 12/08
             read guess
-        done
+        done    
+        guessa=(${guess:0:1} ${guess:1:1} ${guess:2:1} ${guess:3:1} ${guess:4:1})
         if [ "$guess" = "$target" ]; then  # if the guess is correct
+            create_hints
             render_hint
+            success=1
             break
         else
-            echo "aaa $lettersa"
             create_hints
             render_hint
         fi
     done
+    if [ $success -ne 1 ]; then
+        echo -e "The word was ${target}"
+    fi
 }
-
 game
-
-#TODO: add random word choice, fix empty input, fix coloring/spacing on invalid input
