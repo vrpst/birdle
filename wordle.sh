@@ -3,14 +3,18 @@ target="audio"
 targeta=(a u d i o)
 
 validate_guess() {
-    if [ "${#guess}" -ne 5 ]; then
-        return 1
+    if [ ${#1} -ne 5 ]; then  # if length != 5
+        echo 1
     else
-        check=$(grep -iwx $guess ./targets)
-        if [ "$check" = "$guess" ]; then
-            echo 0    # success
+        if [ "$1" = "" ]; then
+            echo 1
         else
-            echo 1    # not found
+            check=$(grep -iwx $1 ./targets)  # if it's in the targets
+            if [ "$check" = "$1" ]; then
+                echo 0    # success
+            else
+                echo 1    # not found
+            fi
         fi
     fi
 }
@@ -27,7 +31,7 @@ create_hints() {
         if [ ${lettersa[$j]} -eq 0 ]; then      # if the letter is does not exactly map, check it
             brk=0
             k=0
-            while (($k < 5)) && (($brk == 0)); do       # constraints for the word
+            while (($k < 5)) && (($brk = 0)); do       # constraints for the word
                 if [ ${targetchk[$k]} -eq 0 ]; then     # if this is comparing to an index in the target that has not been satisfied yet
                     if [ ${guessa[$j]} = ${targeta[$k]} ]; then     # and the values are the same
                         lettersa[j]=2       # assign a 2
@@ -63,18 +67,21 @@ game() {
     for i in {0..4}; do
         read guess
         guessa=(${guess:0:1} ${guess:1:1} ${guess:2:1} ${guess:3:1} ${guess:4:1})
-        while [ $(validate_guess) -eq 1 ]; do
-            read guess
+        while [ $(validate_guess "$guess") -eq 1 ]; do
             echo -e "\e[1A\e[K\r"  # bugged, bugs with invalid inputs 12/08
+            read guess
         done
-        if [ $guess = $target ]; then
+        if [ "$guess" = "$target" ]; then  # if the guess is correct
             render_hint
             break
         else
-            create_hints $guess
+            echo "aaa $lettersa"
+            create_hints
             render_hint
         fi
     done
 }
 
 game
+
+#TODO: add random word choice, fix empty input, fix coloring/spacing on invalid input
