@@ -1,8 +1,4 @@
 #!/bin/bash
-target="audio"
-targeta=(a u d i o)
-success=0
-
 validate_guess() {
     if [ ${#1} -ne 5 ]; then  # if length != 5
         echo 1
@@ -56,7 +52,7 @@ render_hint() {
         if [ ${lettersa[$i]} -eq 1 ]; then
             hint="${hint}${GREEN}${guessa[$i]}${NONE}"
         elif [ ${lettersa[$i]} -eq 2 ]; then
-            hint="${hint}${YELLOW}${guessa[$i]}"
+            hint="${hint}${YELLOW}${guessa[$i]}${NONE}"
         else
             hint="${hint}${NONE}${guessa[$i]}"
         fi
@@ -66,9 +62,14 @@ render_hint() {
 
 game() {
     #generate the word
+    rand=$(( (RANDOM % 2309) + 1 ))
+    target=$(sed -n "${rand}"p targets)
+    targeta=(${target:0:1} ${target:1:1} ${target:2:1} ${target:3:1} ${target:4:1})
+    success=0
     for i in {0..4}; do
         read guess
         while [ $(validate_guess "$guess") -eq 1 ]; do
+            echo -e "\e[1A\e[K\r"
             read guess
         done    
         guessa=(${guess:0:1} ${guess:1:1} ${guess:2:1} ${guess:3:1} ${guess:4:1})
@@ -86,4 +87,5 @@ game() {
         echo -e "The word was ${target}"
     fi
 }
+
 game
