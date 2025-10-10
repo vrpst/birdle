@@ -6,7 +6,7 @@ validate_guess() {
         if [ "$1" = "" ]; then
             echo 1
         else
-            check=$(grep -iwx $1 .birdle/targets)  # if it's in the targets
+            check=$(grep -iwx $1 ~/.local/bin/.birdle/targets)  # if it's in the targets
             if [ "$check" = "$1" ]; then
                 echo 0    # success
             else
@@ -63,7 +63,7 @@ render_hint() {
 game() {
     #generate the word
     rand=$(( (RANDOM % 2309) + 1 ))
-    target=$(sed -n "${rand}"p .birdle/targets)
+    target=$(sed -n "${rand}"p ~/.local/bin/.birdle/targets)
     targeta=(${target:0:1} ${target:1:1} ${target:2:1} ${target:3:1} ${target:4:1})
     success=0
     for i in {0..4}; do
