@@ -1,6 +1,7 @@
 # birdle
-A simple clone(ish) of Wordle in a bash script.
+A simple clone(ish) of Wordle in a bash script. To run, `chmod +x` the file `birdle.sh`. 
 
-To install, `chmod +x` the `install.sh` script — this will add the files to your `~/.local/bin` folder; if you add this to PATH, you will be able to run the command `birdle` to launch the game.
+If you want to be able to play it from anywhere, you can add it as an alias to your `.bashrc`, but you'll need to change the relative file paths for `./.birdle/guesses` and `./.birdle/targets` to absolute ones.
 
-To uninstall, `chmod +x uninstall.sh` and run it to remove the files. 
+## Demo
+![Demo](demo.png)
